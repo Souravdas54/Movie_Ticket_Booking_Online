@@ -1,0 +1,16 @@
+import { Types } from "mongoose";
+
+export interface userInterface {
+  _id?: Types.ObjectId; 
+  name: string;
+  email: string;
+  phone: number;
+  gender: string;
+  password: string;
+  profilePicture?: string;
+  isVerified: boolean;
+  role: Types.ObjectId | string; 
+  refreshToken?: string;
+  createdAt?: Date; 
+  updatedAt?: Date; 
+}

@@ -1,0 +1,579 @@
+/* signupstyle.css */
+.signup-modal-container {
+  position: relative;
+  background: white;
+  width: 100%;
+}
+
+.signup-modal-container .signup-card {
+  background: white;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 40px 32px;
+  /* width: 100%; */
+  max-width: 100%;
+  margin: 0;
+  animation: none;
+}
+
+.signup-logo {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.logo-icon {
+  font-size: 40px !important;
+  color: #2563eb;
+  margin-bottom: 16px;
+}
+
+.signup-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #111827;
+  text-align: center;
+  margin-bottom: 8px;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.signup-subtitle {
+  font-size: 14px;
+  color: #6b7280;
+  text-align: center;
+  margin-bottom: 32px;
+  line-height: 1.5;
+  font-weight: 400;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.signup-form {
+  width: 100%;
+}
+
+.name-fields {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 0;
+}
+
+.name-field {
+  flex: 1;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 6px;
+  line-height: 1.25;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.form-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  background: white;
+  color: #111827;
+  line-height: 1.5;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  box-sizing: border-box;
+  height: 40px;
+}
+
+.form-input::placeholder {
+  color: #9ca3af;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+  background: white;
+}
+
+.form-input:hover {
+  border-color: #9ca3af;
+  background: #f9fafb;
+}
+
+.password-input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-toggle {
+  position: absolute !important;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6b7280 !important;
+  padding: 4px !important;
+}
+
+.password-toggle:hover {
+  background: transparent !important;
+  color: #374151 !important;
+}
+
+.signup-button {
+  width: 100%;
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 20px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  line-height: 1.5;
+  letter-spacing: 0.025em;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.signup-button:hover {
+  background: #1d4ed8;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
+}
+
+.signup-button:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(37, 99, 235, 0.2);
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  margin: 24px 0;
+  color: #6b7280;
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #e5e7eb;
+}
+
+.divider-text {
+  padding: 0 12px;
+  line-height: 1.25;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.google-button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: white;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 24px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  line-height: 1.5;
+  height: 40px;
+}
+
+.google-button:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+  transform: translateY(-1px);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.google-icon {
+  font-size: 18px !important;
+  color: #db4437;
+}
+
+.login-link {
+  text-align: center;
+  font-size: 14px;
+  color: #6b7280;
+  line-height: 1.5;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.login-link a {
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 600;
+  margin-left: 4px;
+  transition: color 0.2s ease;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.login-link a:hover {
+  text-decoration: underline;
+  color: #1d4ed8;
+}
+
+/* Loading state */
+.signup-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Error states */
+.form-input.error {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.1);
+}
+
+.error-message {
+  color: #dc2626;
+  font-size: 12px;
+  margin-top: 4px;
+  font-weight: 400;
+  line-height: 1.25;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Dialog customization */
+.MuiDialog-paper {
+  margin: 20px;
+  border-radius: 12px !important;
+  overflow: hidden;
+  max-width: 420px !important;
+}
+
+.MuiDialogContent-root {
+  padding: 0 !important;
+}
+
+/* Ensure modal is centered properly */
+.MuiDialog-container {
+  backdrop-filter: blur(5px);
+  background: rgba(0, 0, 0, 0.5);
+}
+
+/* Close button styling */
+.MuiIconButton-root {
+  transition: all 0.2s ease !important;
+  padding: 6px !important;
+}
+
+.MuiIconButton-root:hover {
+  background-color: rgba(0, 0, 0, 0.04) !important;
+}
+
+
+.preview-container .preview-avatar {
+  width: 30%;
+  height: auto;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0px 10px 125px;
+
+}
+.review-container .file-info{
+  text-align: center;
+  margin-bottom: 0px;
+}
+
+
+/* Responsive Design */
+
+/* XXL Screens (1400px and above) */
+@media (min-width: 1400px) {
+  .signup-modal-container .signup-card {
+    padding: 48px 40px;
+  }
+
+  .signup-title {
+    font-size: 28px;
+    margin-bottom: 12px;
+  }
+
+  .signup-subtitle {
+    font-size: 16px;
+    margin-bottom: 40px;
+  }
+
+  .form-input {
+    padding: 12px 16px;
+    font-size: 16px;
+    border-radius: 8px;
+    height: 44px;
+  }
+
+  .form-input::placeholder {
+    font-size: 16px;
+  }
+
+  .signup-button,
+  .google-button {
+    padding: 12px 16px;
+    font-size: 16px;
+    border-radius: 8px;
+    height: 44px;
+  }
+
+  .form-label,
+  .login-link {
+    font-size: 15px;
+  }
+
+  .logo-icon {
+    font-size: 48px !important;
+  }
+}
+
+/* XL Screens (1200px to 1399px) */
+@media (min-width: 1200px) and (max-width: 1399px) {
+  .signup-modal-container .signup-card {
+    padding: 40px 32px;
+  }
+
+  .signup-title {
+    font-size: 26px;
+  }
+
+  .logo-icon {
+    font-size: 44px !important;
+  }
+}
+
+/* LG Screens (992px to 1199px) */
+@media (min-width: 992px) and (max-width: 1199px) {
+  .signup-modal-container .signup-card {
+    padding: 36px 28px;
+  }
+
+  .signup-title {
+    font-size: 24px;
+  }
+
+  .logo-icon {
+    font-size: 40px !important;
+  }
+}
+
+/* MD Screens (768px to 991px) */
+@media (min-width: 768px) and (max-width: 991px) {
+  .MuiDialog-paper {
+    margin: 20px;
+    max-width: 400px !important;
+  }
+
+  .signup-modal-container .signup-card {
+    padding: 32px 24px;
+  }
+
+  .signup-title {
+    font-size: 22px;
+  }
+
+  .logo-icon {
+    font-size: 38px !important;
+  }
+}
+
+/* SM Screens (576px to 767px) */
+@media (min-width: 576px) and (max-width: 767px) {
+  .MuiDialog-paper {
+    margin: 16px;
+    max-width: 380px !important;
+  }
+
+  .signup-modal-container .signup-card {
+    padding: 28px 20px;
+  }
+
+  .logo-icon {
+    font-size: 36px !important;
+    margin-bottom: 12px;
+  }
+
+  .signup-title {
+    font-size: 20px;
+  }
+
+  .signup-subtitle {
+    font-size: 13px;
+  }
+}
+
+/* XS Screens (below 576px) */
+@media (max-width: 575px) {
+  .MuiDialog-paper {
+    margin: 12px;
+    border-radius: 10px !important;
+    max-width: calc(100vw - 24px) !important;
+  }
+
+  .signup-modal-container .signup-card {
+    padding: 24px 16px;
+  }
+
+  .name-fields {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .logo-icon {
+    font-size: 32px !important;
+    margin-bottom: 12px;
+  }
+
+  .signup-title {
+    font-size: 18px;
+    margin-bottom: 6px;
+  }
+
+  .signup-subtitle {
+    font-size: 12px;
+    margin-bottom: 24px;
+  }
+
+  .form-group {
+    margin-bottom: 16px;
+  }
+
+  .form-input {
+    padding: 8px 10px;
+    font-size: 13px;
+    height: 36px;
+  }
+
+  .form-input::placeholder {
+    font-size: 13px;
+  }
+
+  .signup-button,
+  .google-button {
+    padding: 8px 12px;
+    font-size: 13px;
+    margin-bottom: 20px;
+    height: 36px;
+  }
+
+  .divider {
+    margin: 20px 0;
+  }
+
+  .login-link {
+    font-size: 13px;
+  }
+}
+
+/* Extra Small Devices (below 400px) */
+@media (max-width: 400px) {
+  .MuiDialog-paper {
+    margin: 8px;
+    border-radius: 8px !important;
+    max-width: calc(100vw - 16px) !important;
+  }
+
+  .signup-modal-container .signup-card {
+    padding: 20px 12px;
+  }
+
+  .logo-icon {
+    font-size: 28px !important;
+    margin-bottom: 8px;
+  }
+
+  .signup-title {
+    font-size: 16px;
+  }
+
+  .signup-subtitle {
+    font-size: 11px;
+    margin-bottom: 20px;
+  }
+
+  .form-input {
+    padding: 6px 8px;
+    font-size: 12px;
+    height: 32px;
+  }
+
+  .form-input::placeholder {
+    font-size: 12px;
+  }
+
+  .signup-button,
+  .google-button {
+    padding: 6px 8px;
+    font-size: 12px;
+    height: 32px;
+  }
+
+  .login-link {
+    font-size: 12px;
+  }
+
+  .divider-text {
+    font-size: 11px;
+  }
+}
+
+/* Focus accessibility */
+.form-input:focus-visible,
+.signup-button:focus-visible,
+.google-button:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 1px;
+}
+
+/* Smooth transitions for all interactive elements */
+.form-input,
+.signup-button,
+.google-button,
+.login-link a {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Loading spinner alignment */
+.signup-button:disabled {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+/* Material-UI Dialog overrides */
+.MuiDialog-scrollPaper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Ensure proper z-index for close button */
+.MuiIconButton-root {
+  z-index: 10;
+}
