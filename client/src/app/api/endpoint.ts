@@ -37,6 +37,54 @@ export const signin = async (formdata: { email: string, password: string }) => {
     }
 }
 
+export const verifyOtp = async (data: { userId: string, otp: string }) => {
+    try {
+        console.log('Sending verify OTP request:', data);
+
+        const response = await axios.post(`${API_URL}/auth/verify-otp`, data, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        console.log('✅ Verify OTP response:', response.data);
+        return response.data;
+
+    } catch (error: unknown) {
+        if (axios.isAxiosError(error)) {
+            console.error('Verify OTP API error:', error.response?.data);
+            throw new Error(error.response?.data?.message || 'Failed to verify OTP');
+        }
+        throw new Error('Failed to verify OTP');
+    }
+}
+
+// Resend OTP function - FIXED
+export const resendOtp = async (userId: string) => {
+    try {
+        console.log('🔄 Sending resend OTP request for user:', userId);
+
+        const response = await axios.post(`${API_URL}/auth/resend-otp`,
+            { userId },
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            }
+        );
+
+        console.log('✅ Resend OTP response:', response.data);
+        return response.data;
+
+    } catch (error: unknown) {
+        if (axios.isAxiosError(error)) {
+            console.error('Resend OTP API error:', error.response?.data);
+            throw new Error(error.response?.data?.message || 'Failed to resend OTP');
+        }
+        throw new Error('Failed to resend OTP');
+    }
+}
+
 export const logout = async (role: string) => {
     try {
         const res = await axiosInstance.post(`${API_URL}/${role}/auth/logout`, {},
@@ -47,7 +95,51 @@ export const logout = async (role: string) => {
         window.location.href = '/'
         return res.data;
 
-    } catch (error) {
-        console.log("Logout faild", error);
+    } catch (error: unknown) {
+        if (axios.isAxiosError(error)) {
+            throw new Error(error.response?.data?.message || 'Logout failed');
+        }
+        throw new Error('Logout failed');
+    }
+}
+
+export const getAllMovies = async () => {
+    try {
+        const res = await axios.get(`${API_URL}/movies/get/all-movies`);
+
+        if (res.data && res.data.success) {
+            return res.data.data; // Return the actual movies array
+        } else {
+            throw new Error('Invalid response structure');
+        }
+
+    } catch (error: unknown) {
+
+        if (axios.isAxiosError(error)) {
+            throw new Error(error.response?.data?.message || 'Failed to fetch movies');
+        }
+        throw new Error('Failed to fetch movies');
+        // throw new Error('Movies endpoint not found. Please check the API route.');
+
+    }
+    // Handle specific error cases
+
+
+}
+
+export const getMovieById = async (id: string) => {
+    try {
+        const res = await axiosInstance.get(`${API_URL}/api/movies/${id}`);
+        if (res.data && res.data.success) {
+            return res.data.data;
+        } else {
+            throw new Error('Movie not found');
+        }
+    } catch (error: unknown) {
+        if (axios.isAxiosError(error)) {
+            console.error('Please login to view movie details:', error.response?.data);
+            throw new Error(error.response?.data?.message || 'Failed to fetch movie');
+        }
+        throw new Error('Failed to fetch movie');
     }
 }

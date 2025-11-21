@@ -7,6 +7,9 @@ import jwt from "jsonwebtoken";
 import { roleModel } from '../models/role.model';
 import { TokenService } from '../services/token.service';
 import { emailService } from '../services/email.service';
+import { sendOtpEmail } from '../services/send.otpmail.service';
+import cloudinary from '../config/cloudinaryConfig';
+
 
 class UserController {
     async register(req: Request, res: Response): Promise<any> {
@@ -30,29 +33,35 @@ class UserController {
             // Check if user already exists
             const existingUser = await userRepositories.findByEmail(value.email);
             if (existingUser) {
-                console.log("❌ Email already exists:", value.email);
+                console.log("Email already exists:", value.email);
+
+
+                if (req.file && (req.file as any).filename) {
+                    const publicId = (req.file as any).filename; //this is Cloudinary public_id
+
+                    try {
+                        await cloudinary.uploader.destroy(publicId);
+                        console.log("🧹 Image deleted from Cloudinary:", publicId);
+                    } catch (err) {
+                        console.log("⚠️ Failed to delete image from Cloudinary:", err);
+                    }
+                }
+
                 return res.status(400).json({
                     success: false,
                     message: "Email already registered"
                 });
             }
 
-            // Handle profile picture
-            // let profilePictureUrl = "";
-            // if (req.file && (req.file as any).path) {
-            //     profilePictureUrl = (req.file as any).path;
-            //     console.log("📸 Profile picture path:", profilePictureUrl);
-            // }
-
             let profilePictureUrl = "";
             if (req.file) {
                 // Cloudinary returns the file object with secure_url
                 profilePictureUrl = (req.file as any).secure_url || (req.file as any).path;
-                console.log("📸 Profile picture uploaded successfully:", profilePictureUrl);
-                console.log("📸 Full file object:", req.file);
+                console.log("Profile picture uploaded successfully:", profilePictureUrl);
+                console.log("Full file object:", req.file);
             } else {
-                console.log("❌ No file received. Check multer configuration.");
-                console.log("❌ Request headers:", req.headers['content-type']);
+                console.log("No file received. Check multer configuration.");
+                console.log("Request headers:", req.headers['content-type']);
             }
 
             // Hash password
@@ -63,7 +72,7 @@ class UserController {
             // Set default role if not provided
             if (!value.role) {
                 value.role = 'user';
-                console.log("👤 Default role assigned: user");
+                console.log("Default role assigned: user");
             }
 
             // Create user data object
@@ -84,14 +93,14 @@ class UserController {
             const newUser = await userRepositories.save(userData);
 
             if (!newUser) {
-                console.log("❌ Failed to create user in database");
+                console.log("Failed to create user in database");
                 return res.status(500).json({
                     success: false,
                     message: "Failed to create user"
                 });
             }
 
-            console.log("✅ User created successfully with ID:", newUser._id);
+            console.log("User created successfully with ID:", newUser._id);
 
             // Generate verification token
             // const verificationToken = jwt.sign(
@@ -102,6 +111,20 @@ class UserController {
             //     process.env.JWT_SECRET as string,
             //     { expiresIn: '1d' }
             // );
+
+             // Send OTP email for verification
+            try {
+              
+                const otpSent = await sendOtpEmail(newUser.email, newUser);
+
+                if (!otpSent) {
+                    console.log('⚠️ Account created but OTP email sending failed');
+                } else {
+                    console.log('✅ OTP email sent successfully');
+                }
+            } catch (emailError) {
+                console.log('⚠️ OTP email service error:', emailError);
+            }
 
             // Send verification email
             try {
@@ -140,7 +163,7 @@ class UserController {
             });
 
         } catch (error: any) {
-            console.log("❌ Registration error:", error.message);
+            console.log("Registration error:", error.message);
             return res.status(500).json({
                 success: false,
                 message: "Internal Server Error",
@@ -225,13 +248,13 @@ class UserController {
                 roleName = roleDoc.name;
             }
 
-            const payload = {
-                name: userData.name,
-                userId: userData._id.toString(),
-                email: userData.email,
-                phone: userData.phone,
-                role: roleName,
-            };
+            // const payload = {
+            //     name: userData.name,
+            //     userId: userData._id.toString(),
+            //     email: userData.email,
+            //     phone: userData.phone,
+            //     role: roleName,
+            // };
 
             // Generate tokens
             const accessToken = TokenService.generateAccessToken(userData, roleName);

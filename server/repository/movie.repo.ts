@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { movieModel } from "../models/movie.model";
 import { roleModel } from "../models/role.model";
 
@@ -40,6 +41,107 @@ class MovieRepositories {
 
         } catch (error) {
             console.log("Repository Error - create:", error);
+            throw error;
+        }
+    }
+
+    async find() {
+        try {
+            const getAllMovies = await movieModel.find()
+
+            // const getAllMovies = await movieModel.aggregate([
+            //     {
+            //         $lookup: {
+            //             from: "users",
+            //             localField: "userId",
+            //             foreignField: "_id",
+            //             as: "createdBy"
+            //         }
+            //     },
+            //     {
+            //         $unwind: {
+            //             path: "$createdBy",
+            //             preserveNullAndEmptyArrays: true
+            //         }
+            //     },
+            //     {
+            //         $project: {
+            //             moviename: 1,
+            //             genre: 1,
+            //             language: 1,
+            //             duration: 1,
+            //             cast: 1,
+            //             director: 1,
+            //             releaseDate: 1,
+            //             description: 1,
+            //             poster: 1,
+            //             rating: 1,
+            //             votes: 1,
+            //             likes: 1,
+            //             promoted: 1,
+            //             createdAt: 1,
+            //             "createdBy.name": 1,
+            //             "createdBy.email": 1
+            //         }
+            //     },
+            //     {
+            //         $sort: { createdAt: -1 }
+            //     }
+            // ]);
+           
+            return getAllMovies;
+        } catch (error) {
+            console.log("Repository Error - find:", error);
+            throw error;
+        }
+    }
+
+    async findById(id: string) {
+        try {
+            const movie = await movieModel.aggregate([
+                {
+                    $match: { _id: new mongoose.Types.ObjectId(id) }
+                },
+                {
+                    $lookup: {
+                        from: "users",
+                        localField: "userId",
+                        foreignField: "_id",
+                        as: "createdBy"
+                    }
+                },
+                {
+                    $unwind: {
+                        path: "$createdBy",
+                        preserveNullAndEmptyArrays: true
+                    }
+                },
+                {
+                    $project: {
+                        moviename: 1,
+                        genre: 1,
+                        language: 1,
+                        duration: 1,
+                        cast: 1,
+                        director: 1,
+                        releaseDate: 1,
+                        description: 1,
+                        poster: 1,
+                        rating: 1,
+                        votes: 1,
+                        likes: 1,
+                        promoted: 1,
+                        createdAt: 1,
+                        "createdBy.name": 1,
+                        "createdBy.email": 1
+                    }
+                }
+            ]);
+
+            return movie.length > 0 ? movie[0] : null;
+
+        } catch (error) {
+            console.log("Repository Error - findById:", error);
             throw error;
         }
     }

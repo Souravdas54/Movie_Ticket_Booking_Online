@@ -32,7 +32,7 @@
 }
 
 .close-button {
-  color: #ffffff !important;
+  color: #000000 !important;
   padding: 8px !important;
 }
 
@@ -197,20 +197,20 @@
   .sidebar-drawer .MuiDrawer-paper {
     max-width: 340px;
   }
-  
+
   .sidebar-header {
     padding: 16px 20px;
   }
-  
+
   .login-section {
     padding: 20px;
   }
-  
+
   .menu-item,
   .submenu-item {
     padding: 10px 20px !important;
   }
-  
+
   .submenu-item {
     padding-left: 60px !important;
   }
@@ -222,43 +222,43 @@
     max-width: 100%;
     width: 100%;
   }
-  
+
   .sidebar-header {
     padding: 12px 16px;
   }
-  
+
   .sidebar-title {
     font-size: 1.3rem !important;
   }
-  
+
   .login-section {
     padding: 16px;
   }
-  
+
   .login-buttons {
     flex-direction: column;
     gap: 8px;
   }
-  
+
   .login-button,
   .register-button {
     padding: 10px 24px !important;
   }
-  
+
   .menu-item,
   .submenu-item {
     padding: 8px 16px !important;
   }
-  
+
   .submenu-item {
     padding-left: 56px !important;
   }
-  
+
   .menu-text .MuiListItemText-primary,
   .submenu-text .MuiListItemText-primary {
     font-size: 0.95rem !important;
   }
-  
+
   .menu-text .MuiListItemText-secondary,
   .submenu-text .MuiListItemText-secondary {
     font-size: 0.75rem !important;
@@ -267,27 +267,32 @@
 
 /* Very small screens (0px - 399px) */
 @media (max-width: 399px) {
+  .sidebar-drawer .MuiDrawer-paper {
+    max-width: 100%;
+    width: 100%;
+  }
+
   .sidebar-header {
     padding: 10px 12px;
   }
-  
+
   .login-section {
     padding: 12px;
   }
-  
+
   .menu-item,
   .submenu-item {
     padding: 6px 12px !important;
   }
-  
+
   .submenu-item {
     padding-left: 52px !important;
   }
-  
+
   .menu-icon {
     min-width: 44px !important;
   }
-  
+
   .submenu-icon {
     min-width: 36px !important;
   }
@@ -320,6 +325,7 @@
   from {
     transform: translateX(100%);
   }
+
   to {
     transform: translateX(0);
   }

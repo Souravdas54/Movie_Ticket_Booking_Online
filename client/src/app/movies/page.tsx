@@ -1,249 +1,339 @@
 "use client";
-import React, { useState } from "react";
-import { Box, Card, CardMedia, CardContent, Typography, Button, Rating, Chip, IconButton } from "@mui/material";
-import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
-import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
-import { useRouter } from "next/navigation";
-import { Movie } from "@/types/movie";
 
-interface MoviesHomeProps {
-  movies: Movie[];
+import React, { useEffect, useState } from "react";
+import { getAllMovies } from "../api/endpoint";
+import { useRouter } from "next/navigation";
+import {
+  Alert,
+  CircularProgress,
+  Box,
+  Typography,
+  Card,
+  CardMedia,
+  CardContent,
+  Chip,
+  IconButton,
+  useTheme,
+  useMediaQuery,
+  Button
+} from "@mui/material";
+import {
+  ArrowBackIos as ArrowBackIcon,
+  ArrowForwardIos as ArrowForwardIcon,
+  Favorite,
+  Star,
+  PlayArrow,
+  CalendarToday
+} from "@mui/icons-material";
+import "./moviestyle.css";
+
+interface Movie {
+  _id: string;
+  moviename: string;
+  genre: string;
+  language: string;
+  rating: number;
+  duration?: string;
+  releaseDate?: string;
+  poster?: string;
+  votes?: number;
+  likes?: number;
 }
 
-export default function MoviesHome({ movies }: MoviesHomeProps) {
+const MoviesHome: React.FC = () => {
+  const [movies, setMovies] = useState<Movie[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
   const router = useRouter();
 
-  const itemsPerSlide = 5; // always 5 movies per slide
-  const slides: Movie[][] = [];
-  for (let i = 0; i < movies.length; i += itemsPerSlide) {
-    slides.push(movies.slice(i, i + itemsPerSlide));
+  const theme = useTheme();
+  const isXs = useMediaQuery(theme.breakpoints.only('xs'));
+  const isSm = useMediaQuery(theme.breakpoints.only('sm'));
+  const isMd = useMediaQuery(theme.breakpoints.only('md'));
+  const isLg = useMediaQuery(theme.breakpoints.only('lg'));
+
+  const getItemsPerSlide = () => {
+    if (isXs) return 1;
+    if (isSm) return 2;
+    if (isMd) return 4;
+    if (isLg) return 5;
+    return 5;
+  };
+
+  const itemsPerSlide = getItemsPerSlide();
+  const totalSlides = Math.ceil(movies.length / itemsPerSlide);
+
+  useEffect(() => {
+    const fetchMovies = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const moviesData = await getAllMovies();
+        
+        if (Array.isArray(moviesData) && moviesData.length > 0) {
+          setMovies(moviesData);
+        } else {
+          setMovies([]);
+          setError("No movies available in the database");
+        }
+      } catch (error: any) {
+        console.error("Error in fetchMovies:", error);
+        setError(error.message || "Failed to load movies. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMovies();
+  }, []);
+
+  const handleNextSlide = async () => {
+    if (currentSlide < totalSlides - 1 && !isAnimating) {
+      setIsAnimating(true);
+      setCurrentSlide(prev => prev + 1);
+      setTimeout(() => setIsAnimating(false), 500);
+    }
+  };
+
+  const handlePrevSlide = async () => {
+    if (currentSlide > 0 && !isAnimating) {
+      setIsAnimating(true);
+      setCurrentSlide(prev => prev - 1);
+      setTimeout(() => setIsAnimating(false), 500);
+    }
+  };
+
+  const handleMovieClick = (movieId: string) => {
+    router.push(`/booking/${movieId}`);
+  };
+
+  const handleBookNow = (movieId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    router.push(`/booking/${movieId}`);
+  };
+
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+    const target = e.target as HTMLImageElement;
+    target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxyZWN0IHg9IjUwIiB5PSI0MCIgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMjAiIHJ4PSI4IiBmaWxsPSIjQkRDNUM5Ii8+CjxjaXJjbGUgY3g9IjEwMCIgY3k9IjYwIiByPSIyMCIgZmlsbD0iIzlBOUE5QSIvPgo8L3N2Zz4=';
+  };
+
+  const formatNumber = (num: number) => {
+    if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
+    if (num >= 1000) return `${(num / 1000).toFixed(1)}K`;
+    return num.toString();
+  };
+
+  const getRandomPromoted = () => {
+    return Math.random() > 0.7;
+  };
+
+  // Get current slide movies
+  const getCurrentSlideMovies = () => {
+    const startIndex = currentSlide * itemsPerSlide;
+    return movies.slice(startIndex, startIndex + itemsPerSlide);
+  };
+
+  if (loading) {
+    return (
+      <Box className="movies-container" sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
+        <Box className="loading-container">
+          <CircularProgress size={50} sx={{ color: '#1976d2' }} />
+          <Typography variant="h6" sx={{ mt: 2, color: '#666', fontWeight: 500 }}>
+            Loading Movies...
+          </Typography>
+        </Box>
+      </Box>
+    );
   }
 
-  const [current, setCurrent] = useState(0);
+  if (error) {
+    return (
+      <Box className="movies-container" sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
+        <Alert severity="error" sx={{ borderRadius: 3, maxWidth: 400, boxShadow: 2 }}>
+          {error}
+        </Alert>
+      </Box>
+    );
+  }
 
-  const goPrev = () => setCurrent((c) => Math.max(0, c - 1));
-  const goNext = () => setCurrent((c) => Math.min(slides.length - 1, c + 1));
-
-  // Format votes number with commas
-  const formatVotes = (votes: number) => {
-    return votes.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  };
-
-  // Get first genre from array
-  const getFirstGenre = (genres: string[]) => {
-    return genres.length > 0 ? genres[0] : "Movie";
-  };
+  if (movies.length === 0) {
+    return (
+      <Box className="movies-container" sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
+        <Alert severity="info" sx={{ borderRadius: 3, maxWidth: 400, boxShadow: 2 }}>
+          No movies found. Please check back later.
+        </Alert>
+      </Box>
+    );
+  }
 
   return (
-    <Box sx={{ width: "100%", p: 2, overflow: "hidden" }}>
-
-      {/* HEADER */}
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          mb: 4,
-        }}
-      >
-        <Typography variant="h4" sx={{ fontWeight: "900", textTransform: "uppercase" }}>
-          RECOMMENDED MOVIES
-        </Typography>
-
-        <Box sx={{ display: "flex", gap: 1 }}>
-          <IconButton
-            onClick={goPrev}
-            disabled={current === 0}
-            sx={{
-              bgcolor: "#1976d2",
-              color: "white",
-              "&:hover": { bgcolor: "#1565c0" },
-              "&:disabled": { bgcolor: "#bdbdbd", color: "#757575" }
-            }}
-          >
-            <ArrowBackIosNewIcon />
-          </IconButton>
-
-          <IconButton
-            onClick={goNext}
-            disabled={current === slides.length - 1}
-            sx={{
-              bgcolor: "#1976d2",
-              color: "white",
-              "&:hover": { bgcolor: "#1565c0" },
-              "&:disabled": { bgcolor: "#bdbdbd", color: "#757575" }
-            }}
-          >
-            <ArrowForwardIosIcon />
-          </IconButton>
+    <Box className="movies-container">
+      {/* Header - Left Aligned */}
+      <Box className="movies-header">
+        <Box className="header-content">
+          <Typography className="movies-title">
+            Recommended Movies
+          </Typography>
+          <Typography className="movies-subtitle">
+            Curated collection of trending movies
+          </Typography>
+          <Box className="header-decoration">
+            <Box className="decoration-line"></Box>
+            <PlayArrow className="decoration-icon" />
+          </Box>
         </Box>
       </Box>
 
-      {/* SLIDER */}
-      <Box
-        sx={{
-          width: "100%",
-          overflow: "hidden",
-        }}
-      >
-        <Box
-          sx={{
-            display: "flex",
-            width: `${slides.length * 100}%`,
-            transition: "transform 0.6s ease-in-out",
-            transform: `translateX(-${current * (100 / slides.length)}%)`,
-          }}
-        >
-          {slides.map((group: Movie[], i: number) => (
-            <Box
-              key={i}
-              sx={{
-                width: `${100 / slides.length}%`,
-                display: "flex",
-                justifyContent: "space-between",
-                px: 1,
-                gap: 2,
-              }}
+      {/* Carousel Container */}
+      <Box className="carousel-container">
+        {/* Navigation Arrows */}
+        {totalSlides > 1 && (
+          <>
+            <IconButton
+              onClick={handlePrevSlide}
+              disabled={currentSlide === 0 || isAnimating}
+              className={`nav-arrow left-arrow ${isAnimating ? 'animating' : ''}`}
             >
-              {group.map((m: Movie) => (
-                <Box
-                  key={m._id}
-                  sx={{
-                    flex: "1 1 0",
-                    minWidth: 0,
-                    cursor: "pointer",
-                  }}
-                  onClick={() => router.push(`/movie/${m._id}`)}
-                >
-                  <Card
-                    sx={{
-                      height: "100%",
-                      borderRadius: 3,
-                      overflow: "hidden",
-                      boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-                      transition: "all 0.3s ease",
-                      "&:hover": { 
-                        transform: "translateY(-8px)", 
-                        boxShadow: "0 12px 28px rgba(0,0,0,0.2)" 
-                      },
-                    }}
-                  >
-                    <CardMedia
-                      component="img"
-                      image={m.poster}
-                      alt={m.moviename}
-                      sx={{ 
-                        height: { xs: 300, sm: 320, md: 340, lg: 360, xl: 380 },
-                        objectFit: "cover" 
-                      }}
-                    />
+              <ArrowBackIcon />
+            </IconButton>
 
-                    <CardContent sx={{ p: 2, display: "flex", flexDirection: "column", gap: 1 }}>
-                      <Typography
-                        variant="h6"
-                        sx={{
-                          fontWeight: "700",
-                          textAlign: "center",
-                          minHeight: "3em",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          fontSize: { xs: "0.9rem", sm: "1rem", md: "1.1rem" }
-                        }}
-                      >
-                        {m.moviename}
-                      </Typography>
+            <IconButton
+              onClick={handleNextSlide}
+              disabled={currentSlide === totalSlides - 1 || isAnimating}
+              className={`nav-arrow right-arrow ${isAnimating ? 'animating' : ''}`}
+            >
+              <ArrowForwardIcon />
+            </IconButton>
+          </>
+        )}
 
-                      {/* Rating and Votes */}
-                      <Box sx={{ 
-                        display: "flex", 
-                        flexDirection: "column", 
-                        alignItems: "center", 
-                        gap: 0.5,
-                        mb: 1
-                      }}>
-                        <Rating
-                          value={5} // Always show 5 stars as in the image
-                          readOnly
-                          max={5}
-                          sx={{
-                            "& .MuiRating-icon": {
-                              color: "#ffc107"
-                            }
-                          }}
-                        />
-                        <Typography 
-                          variant="body2" 
-                          sx={{ 
-                            fontWeight: "600", 
-                            color: "#666",
-                            fontSize: { xs: "0.8rem", sm: "0.9rem" }
-                          }}
-                        >
-                          {formatVotes(m.votes)}
-                        </Typography>
-                      </Box>
+        {/* Movies Carousel */}
+        <Box className="carousel-track">
+          <Box className={`carousel-slide ${isAnimating ? 'slide-transition' : ''}`}>
+            {getCurrentSlideMovies().map((movie) => (
+              <Card
+                key={movie._id}
+                className="movie-card"
+                onClick={() => handleMovieClick(movie._id)}
+                sx={{
+                  flex: `0 0 calc(${100 / itemsPerSlide}% - ${24 - (24 / itemsPerSlide)}px)`,
+                  minWidth: 0
+                }}
+              >
+                {/* Promoted Badge */}
+                {getRandomPromoted() && (
+                  <Box className="promoted-badge">
+                    <Star className="promoted-star" />
+                    TRENDING
+                  </Box>
+                )}
 
-                      {/* Price and Genre */}
-                      {/* <Box sx={{ 
-                        display: "flex", 
-                        flexDirection: "column", 
-                        alignItems: "center", 
-                        gap: 1,
-                        mt: "auto"
-                      }}>
-                        <Typography 
-                          variant="h6" 
-                          sx={{ 
-                            fontWeight: "800", 
-                            color: "#d32f2f",
-                            fontSize: { xs: "1.1rem", sm: "1.2rem", md: "1.3rem" }
-                          }}
-                        >
-                          {m.price || "2.00 €"}
-                        </Typography>
-                        <Chip
-                          label={getFirstGenre(m.genre)}
-                          size="small"
-                          sx={{ 
-                            fontWeight: 500,
-                            bgcolor: "#f5f5f5",
-                            color: "#555",
-                            border: "1px solid #ddd",
-                            fontSize: { xs: "0.7rem", sm: "0.75rem" }
-                          }}
-                        />
-                      </Box> */}
-                    </CardContent>
-                  </Card>
+                {/* Movie Poster */}
+                <Box className="poster-container">
+                  <CardMedia
+                    component="img"
+                    className="movie-poster"
+                    image={movie.poster || ''}
+                    alt={movie.moviename}
+                    onError={handleImageError}
+                  />
+                  <Box className="poster-overlay">
+                    <Button 
+                      variant="contained" 
+                      className="book-now-btn"
+                      onClick={(e) => handleBookNow(movie._id, e)}
+                      startIcon={<CalendarToday />}
+                    >
+                      Book Now
+                    </Button>
+                  </Box>
                 </Box>
-              ))}
-            </Box>
-          ))}
+
+                <CardContent className="movie-content">
+                  {/* Movie Title */}
+                  <Typography className="movie-title">
+                    {movie.moviename}
+                  </Typography>
+
+                  {/* Movie Info */}
+                  <Box className="movie-meta">
+                    <Typography className="movie-language">
+                      {movie.language}
+                    </Typography>
+                    <Typography className="movie-duration">
+                      {movie.duration || '2h 30m'}
+                    </Typography>
+                  </Box>
+
+                  {/* Rating and Votes */}
+                  <Box className="rating-section">
+                    <Box className="rating-badge">
+                      <Star className="rating-star" />
+                      <Typography className="rating-score">
+                        {movie.rating || 0}/10
+                      </Typography>
+                    </Box>
+                    <Typography className="votes-count">
+                      {formatNumber(movie.votes || 0)} votes
+                    </Typography>
+                  </Box>
+
+                  {/* Likes */}
+                  <Box className="likes-section">
+                    <Favorite className="likes-heart" />
+                    <Typography className="likes-count">
+                      {formatNumber(movie.likes || Math.floor(Math.random() * 50000) + 1000)} likes
+                    </Typography>
+                  </Box>
+
+                  {/* Genre Chips */}
+                  <Box className="genre-container">
+                    {movie.genre?.split('/').slice(0, 2).map((genre, index) => (
+                      <Chip
+                        key={index}
+                        label={genre.trim()}
+                        className="genre-chip"
+                        size="small"
+                      />
+                    ))}
+                  </Box>
+                </CardContent>
+              </Card>
+            ))}
+          </Box>
         </Box>
+
+        {/* Slide Indicators */}
+        {totalSlides > 1 && (
+          <Box className="slide-indicators">
+            {Array.from({ length: totalSlides }).map((_, index) => (
+              <Box
+                key={index}
+                className={`slide-dot ${currentSlide === index ? 'active' : ''} ${isAnimating ? 'animating' : ''}`}
+                onClick={() => !isAnimating && setCurrentSlide(index)}
+              />
+            ))}
+          </Box>
+        )}
+
+        {/* Slide Counter */}
+        {totalSlides > 1 && (
+          <Typography className="slide-counter">
+            {currentSlide + 1} / {totalSlides}
+          </Typography>
+        )}
       </Box>
 
-      {/* INDICATORS */}
-      <Box sx={{ display: "flex", justifyContent: "center", mt: 3, gap: 1 }}>
-        {slides.map((_, i: number) => (
-          <Box
-            key={i}
-            onClick={() => setCurrent(i)}
-            sx={{
-              width: 10,
-              height: 10,
-              borderRadius: "50%",
-              cursor: "pointer",
-              background: i === current ? "#1976d2" : "#ddd",
-              transform: i === current ? "scale(1.2)" : "scale(1)",
-              transition: "all 0.3s ease",
-              "&:hover": {
-                background: i === current ? "#1976d2" : "#bbb",
-              }
-            }}
-          />
-        ))}
+      {/* Total Movies Counter */}
+      <Box className="total-movies">
+        <Typography variant="body2" className="total-text">
+          Discover {movies.length} Movies • Updated Daily
+        </Typography>
       </Box>
     </Box>
   );
-}
+};
+
+export default MoviesHome;

@@ -16,6 +16,7 @@ import { LocalMovies, Google, Close } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
 import { signin } from "@/app/api/endpoint";
 import "./signinstyle.css";
+import { UserType } from "@/types/usertype";
 
 interface Usertype {
     email: string;
@@ -26,7 +27,7 @@ interface LoginModalProps {
     open: boolean;
     onClose: () => void;
     onSwitchToSignup: () => void;
-    onLoginSuccess: (user: Usertype) => void;
+    onLoginSuccess: (user: UserType) => void;
 }
 
 interface LoginResponse {
@@ -133,14 +134,14 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, onClose, onSwitchToSignup
                     sessionStorage.setItem("accessToken", accessToken);
                     console.log('Access token stored in sessionStorage');
                 } else {
-                    console.log('❌ No access token found in response');
+                    console.log('No access token found in response');
                 }
 
                 if (refreshToken) {
                     sessionStorage.setItem("refreshToken", refreshToken);
                     console.log('Refresh token stored in sessionStorage');
                 } else {
-                    console.log('❌ No refresh token found in response');
+                    console.log('No refresh token found in response');
                 }
 
                 if (role) {
@@ -181,16 +182,29 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, onClose, onSwitchToSignup
                 setOpenSnackbar(true);
             }
 
-        } catch (error: any) {
+        } catch (error: unknown) {
             // More detailed error handling
             let errorMessage = 'Login failed. Please check your credentials.';
 
-            if (error?.response?.data?.message) {
-                errorMessage = error.response.data.message;
-            } else if (error?.message) {
-                errorMessage = error.message;
-            } else if (error?.code === 'NETWORK_ERROR') {
-                errorMessage = 'Network error. Please check your connection.';
+            // Check if it's an Axios-like error
+            if (typeof error === 'object' && error !== null) {
+                const err = error as {
+                    response?: {
+                        data?: {
+                            message?: string;
+                        };
+                    };
+                    message?: string;
+                    code?: string;
+                };
+
+                if (err.response?.data?.message) {
+                    errorMessage = err.response.data.message;
+                } else if (err.message) {
+                    errorMessage = err.message;
+                } else if (err.code === 'NETWORK_ERROR') {
+                    errorMessage = 'Network error. Please check your connection.';
+                }
             }
 
             setSnackbarMessage(errorMessage);

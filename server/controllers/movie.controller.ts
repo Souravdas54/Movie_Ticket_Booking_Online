@@ -22,8 +22,15 @@ class AllMoviesControllers {
                 });
             }
 
-            // Poster upload → multer থেকে path আসবে
+            // Poster upload → multer 
             const poster = req.file ? req.file.path : null;
+
+            if (!req.file) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Poster image is required"
+                });
+            }
 
             const movieData = {
                 moviename: req.body.moviename,
@@ -55,6 +62,80 @@ class AllMoviesControllers {
             return res.status(400).json({
                 success: false,
                 message: error.message || "Something went wrong"
+            });
+        }
+    }
+
+    async getAllovies(req: Request, res: Response): Promise<any> {
+        try {
+            const getAllMovies = await movieRepositories.find();
+
+            if (getAllMovies && getAllMovies.length > 0) {
+                return res.status(200).json({
+                    success: true,
+                    message: "Get All Movies successfully",
+                    total: getAllMovies.length,
+                    data: getAllMovies,
+                });
+            } else {
+                return res.status(404).json({
+                    success: false,
+                    message: "No users found",
+                    data: []
+                });
+            }
+        } catch (error: unknown) {
+            console.log("Controller Error - get all movie:", error);
+
+            // Proper error handling for unknown type
+            let errorMessage = "Something went wrong";
+            if (error instanceof Error) {
+                errorMessage = error.message;
+            }
+
+            return res.status(400).json({
+                success: false,
+                message: errorMessage
+            });
+        }
+    }
+
+    async getMovieById(req: Request, res: Response): Promise<any> {
+        try {
+            const { id } = req.params;
+
+            if (!id) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Movie ID is required"
+                });
+            }
+
+            const movie = await movieRepositories.findById(id);
+
+            if (!movie) {
+                return res.status(404).json({
+                    success: false,
+                    message: "Movie not found"
+                });
+            }
+
+            return res.status(200).json({
+                success: true,
+                message: "Movie retrieved successfully",
+                data: movie
+            });
+        } catch (error: unknown) {
+            console.log("Controller Error - get movie by id:", error);
+
+            let errorMessage = "Something went wrong";
+            if (error instanceof Error) {
+                errorMessage = error.message;
+            }
+
+            return res.status(400).json({
+                success: false,
+                message: errorMessage
             });
         }
     }

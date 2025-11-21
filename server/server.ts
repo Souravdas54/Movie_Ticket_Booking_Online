@@ -10,8 +10,10 @@ import { createDefaultRoles } from './middleware/role.middleware';
 import cors from 'cors'
 
 // Routers
-import { userRouter } from './routes/user.router';
-import { movieRouter } from './routes/movie.router';
+import { userRouter } from './routes/user.route';
+import { movieRouter } from './routes/movie.route';
+import { theatherRouter } from './routes/theather.route';
+import { showRouter } from './routes/show.route';
 
 
 app.use(cors({
@@ -27,8 +29,13 @@ app.use(express.urlencoded({ extended: true }))
 app.use(createDefaultRoles);
 
 // Router call
-app.use('/auth',userRouter)
-app.use(movieRouter)
+app.use('/auth', userRouter)
+// Movie
+app.use('/movies', movieRouter)
+// Theather
+app.use(theatherRouter)
+// Show
+app.use(showRouter)
 
 
 app.listen(process.env.PORT, () =>
