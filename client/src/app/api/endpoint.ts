@@ -1,6 +1,7 @@
 import axios from "axios";
 
 import axiosInstance from "./axios.instance";
+import { ReactMovieRequest, SimulateRatingRequest, SimulateRatingResponse } from "@/types/movie";
 
 const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8500' // BACKEND - SERVER HTTP API
 
@@ -129,11 +130,14 @@ export const getAllMovies = async () => {
 
 export const getMovieById = async (id: string) => {
     try {
-        const res = await axiosInstance.get(`${API_URL}/api/movies/${id}`);
+        const res = await axiosInstance.get(`${API_URL}/movies/movie-get/${id}`);
+        console.log('API Response:', res.data);
+
         if (res.data && res.data.success) {
-            return res.data.data;
+            return res.data;
+
         } else {
-            throw new Error('Movie not found');
+            throw new Error(res.data?.message || 'Movie not found');
         }
     } catch (error: unknown) {
         if (axios.isAxiosError(error)) {
@@ -143,3 +147,54 @@ export const getMovieById = async (id: string) => {
         throw new Error('Failed to fetch movie');
     }
 }
+
+export const movieEndpoints = {
+  // Promote/Unpromote movie
+  promoteMovie: async (movieId: string, promoted: boolean) => {
+    try {
+        const response = await axiosInstance.patch(`${API_URL}/movie/${movieId}/promote`, { promoted });
+        return response.data;
+        
+    } catch (error: unknown) {
+        if (axios.isAxiosError(error)) {
+            console.error('', error.response?.data);
+            throw new Error(error.response?.data?.message || '');
+        }
+        throw new Error('');
+    }
+  },
+
+  // Like/Unlike/Vote for movie
+  reactMovie: async (movieId: string, data: ReactMovieRequest) => {
+    try {
+        
+        const response = await axiosInstance.patch(`${API_URL}/movie/${movieId}/react`, data);
+        return response.data;
+    } catch (error:unknown) {
+        
+    }
+  },
+
+  // Simulate rating
+  simulateRating: async (movieId: string, data: SimulateRatingRequest): Promise<SimulateRatingResponse> => {
+   try {
+       const response = await axiosInstance.post(`${API_URL}/movie/${movieId}/simulate`, data);
+       return response.data;
+    
+   } catch (error:unknown) {
+    
+   }
+  },
+
+  // Get all movies
+  getAllMovies: async () => {
+    const response = await axiosInstance.get(`${API_URL}/movies`);
+    return response.data;
+  },
+
+  // Get single movie details
+  getMovieById: async (movieId: string) => {
+    const response = await axiosInstance.get(`${API_URL}/movies/movie-get/${movieId}`);
+    return response.data;
+  }
+};

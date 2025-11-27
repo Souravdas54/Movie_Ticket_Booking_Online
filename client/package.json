@@ -15,11 +15,20 @@
     "@mui/icons-material": "^7.3.5",
     "@mui/material": "^7.3.5",
     "@mui/styled-engine-sc": "^7.3.5",
+    "@mui/x-date-pickers": "^8.19.0",
+    "@reduxjs/toolkit": "^2.10.1",
+    "@types/uuid": "^10.0.0",
     "axios": "^1.13.2",
+    "dayjs": "^1.11.19",
+    "leaflet": "^1.9.4",
     "next": "16.0.1",
     "react": "19.2.0",
     "react-dom": "19.2.0",
-    "styled-components": "^6.1.19"
+    "react-leaflet": "^5.0.0",
+    "react-redux": "^9.2.0",
+    "redux": "^5.0.1",
+    "styled-components": "^6.1.19",
+    "uuid": "^13.0.0"
   },
   "devDependencies": {
     "@types/node": "^20",

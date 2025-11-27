@@ -1,6 +1,12 @@
 import { model, Schema, } from 'mongoose';
 import { ShowInterface } from '../interfaces/show.interface';
 
+const LockSchema = new Schema({
+    seat: String,
+    sessionId: String,
+    expiresAt: Date,
+}, { _id: false });
+
 const ShowSchema: Schema = new Schema({
 
     movieId: {
@@ -14,9 +20,9 @@ const ShowSchema: Schema = new Schema({
         required: true
     },
     room: {
-        name: String,
-        rows: Number,
-        columns: Number
+        name: { type: String, required: true },
+        rows: { type: Number, required: true },
+        columns: { type: Number, required: true }
     },
     screenNumber: {
         type: String,
@@ -40,6 +46,10 @@ const ShowSchema: Schema = new Schema({
         type: [String],
         required: true
     },
+    locks: {
+        type: [LockSchema], // transient locks
+        default: []
+    },
     price: {
         type: Number,
         required: true
@@ -54,6 +64,11 @@ const ShowSchema: Schema = new Schema({
 }, {
     timestamps: true
 })
+
+// Index for better performance
+ShowSchema.index({ movieId: 1, date: 1 });
+ShowSchema.index({ theaterId: 1 });
+ShowSchema.index({ "locks.expiresAt": 1 }, { expireAfterSeconds: 0 });
 
 const showModel = model<ShowInterface>('Show', ShowSchema)
 export { showModel }

@@ -17,6 +17,7 @@ import { useRouter } from "next/navigation";
 import { signin } from "@/app/api/endpoint";
 import "./signinstyle.css";
 import { UserType } from "@/types/usertype";
+import Image from "next/image";
 
 interface Usertype {
     email: string;
@@ -261,15 +262,25 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, onClose, onSwitchToSignup
                         {/* Logo Section */}
                         <Box className="login-logo">
                             <Box sx={{ display: 'flex' }}>
-                                <LocalMovies className="logo-icon" />
+                                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 2 }}>
+                                {/* Replace with your actual logo path */}
+                                <Image
+                                    src="/bookmycinema-logo.png"
+                                    alt="BookMyCinema Logo"
+                                    width={50}
+                                    height={60}
+                                    className="logo-image"
+                                />
+                            </Box>
+                                {/* <LocalMovies className="logo-icon" /> */}
                                 <Typography
                                     variant="h4"
                                     noWrap
                                     component="div"
-                                    sx={{ display: { xs: 'none', sm: 'block' }, mt: 1 }}
+                                    sx={{ display: { xs: 'none', sm: 'block' }, mt: 1,ml:3 }}
                                 // className="logo-text"
                                 >
-                                    MovieFlix
+                                    BookMyCinema
                                 </Typography>
                             </Box>
                             <Typography variant="h2" className="login-title">

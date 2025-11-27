@@ -32,7 +32,7 @@ const BookingSchema: Schema = new Schema({
     },
     status: {
       type: String,
-      enum: ["Confirmed", "Cancelled"],
+      enum: ["Confirmed", "Cancelled","Pending"],
       default: "Confirmed"
     },
     paymentStatus: {
@@ -47,6 +47,12 @@ const BookingSchema: Schema = new Schema({
   },{
     timestamps: true
   });
+
+  
+// Indexes for better performance
+BookingSchema.index({ userId: 1 });
+BookingSchema.index({ showId: 1 });
+BookingSchema.index({ createdAt: 1 });
 
 const bookingModel = model<BookingInterfaace>("Booking", BookingSchema)
 export { bookingModel }

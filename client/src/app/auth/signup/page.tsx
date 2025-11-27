@@ -2,12 +2,13 @@
 "use client";
 
 import React, { useRef, useState } from "react";
-import { Box, Typography, CircularProgress, Snackbar, Alert, Dialog, DialogContent, IconButton, InputAdornment, IconButton as MuiIconButton, Button, Avatar} from "@mui/material";
+import { Box, Typography, CircularProgress, Snackbar, Alert, Dialog, DialogContent, IconButton, InputAdornment, IconButton as MuiIconButton, Button, Avatar } from "@mui/material";
 import { LocalMovies, Google, Close, Visibility, VisibilityOff, Person, Email, Phone, CloudUpload } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
 import { signup } from "@/app/api/endpoint";
 import "./signupstyle.css";
 import OtpPopup from "../otp/page";
+import Image from "next/image";
 
 interface SignupType {
     name: string;
@@ -277,11 +278,21 @@ const SignupModal: React.FC<SignupModalProps> = ({ open, onClose, onSwitchToLogi
                         <Box className="signup-card">
                             {/* Logo Section */}
                             <Box className="signup-logo">
-                                <LocalMovies className="logo-icon" />
+                                {/* <LocalMovies className="logo-icon" /> */}
+                                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 2 }}>
+                                    {/* Replace with your actual logo path */}
+                                    <Image
+                                        src="/bookmycinema-logo.png"
+                                        alt="BookMyCinema Logo"
+                                        width={50}
+                                        height={60}
+                                        className="logo-image"
+                                    />
+                                </Box>
                                 <Typography variant="h1"
                                     sx={{ fontSize: { xs: '2rem' } }}
                                 >
-                                    Create Account
+                                    BookMyCinema
                                 </Typography>
                                 <Typography variant="body1"
                                     className="signup-subtitle"

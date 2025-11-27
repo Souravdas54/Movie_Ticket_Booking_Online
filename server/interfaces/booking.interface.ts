@@ -8,7 +8,7 @@ export interface BookingInterfaace {
     showId: Types.ObjectId;
     seats: number[];
     totalAmount: number;
-    status: "Confirmed" | "Cancelled";
+    status: "Confirmed" | "Cancelled" | "Pending";
     paymentStatus: "Paid" | "Unpaid";
     bookedAt?: Date;
     createdAt?: Date;
@@ -18,6 +18,21 @@ export interface BookingInterfaace {
 export interface CreateBooking {
     seats: number[];
     totalAmount: number;
-    status: "Confirmed" | "Cancelled";
+    status: "Confirmed" | "Cancelled" | "Pending";
     paymentStatus: "Paid" | "Unpaid";
+}
+
+export interface LockSeatRequest {
+    showId: string;
+    seats: string[];
+    sessionId: string;
+    ttlSeconds?: number;
+}
+
+export interface ConfirmBookingRequest {
+    showId: string;
+    seats: string[];
+    userId: string;
+    totalAmount: number;
+    sessionId: string;
 }

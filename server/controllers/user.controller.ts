@@ -1,27 +1,29 @@
+import * as jwt from "jsonwebtoken";
 import { Request, Response } from 'express';
 import { userRepositories } from '../repository/user.repo';
 import { UserValidation } from '../validation/user.validation';
 import _ from 'lodash';
 import bcrypt from 'bcryptjs';
-import jwt from "jsonwebtoken";
 import { roleModel } from '../models/role.model';
 import { TokenService } from '../services/token.service';
 import { emailService } from '../services/email.service';
 import { sendOtpEmail } from '../services/send.otpmail.service';
 import cloudinary from '../config/cloudinaryConfig';
+import { userPayload } from '../interfaces/user.interface';
+import { Secret } from "jsonwebtoken";
 
 
 class UserController {
     async register(req: Request, res: Response): Promise<any> {
         try {
-            console.log("🚀 Register endpoint hit");
-            console.log("📥 Request body:", req.body);
-            console.log("📁 File:", req.file);
+            console.log("Register endpoint hit");
+            console.log("Request body:", req.body);
+            console.log("File:", req.file);
 
             // Validate input
             const { error, value } = UserValidation.signup.validate(req.body);
             if (error) {
-                console.log("❌ Validation error:", error.message);
+                console.log("Validation error:", error.message);
                 return res.status(400).json({
                     success: false,
                     message: error.message
@@ -112,9 +114,9 @@ class UserController {
             //     { expiresIn: '1d' }
             // );
 
-             // Send OTP email for verification
+            // Send OTP email for verification
             try {
-              
+
                 const otpSent = await sendOtpEmail(newUser.email, newUser);
 
                 if (!otpSent) {
@@ -172,36 +174,6 @@ class UserController {
         }
     }
 
-    // async verifyEmail(req: Request, res: Response): Promise<any> {
-    //     try {
-    //         const { token } = req.params;
-    //         const decoded: any = jwt.verify(token, process.env.JWT_SECRET as string);
-    //         const user = await userRepositories.findByEmail(decoded.email);
-
-    //         if (!user) {
-    //             return res.status(404).json({
-    //                 success: false,
-    //                 message: "User not found"
-    //             });
-    //         }
-
-    //         user.isVerified = true;
-    //         await user.save();
-
-    //         return res.status(200).json({
-    //             success: true,
-    //             message: "Email verified successfully!"
-    //         });
-
-    //     } catch (error: any) {
-    //         console.log("Email verification error:", error.message);
-    //         return res.status(400).json({
-    //             success: false,
-    //             message: "Invalid or expired token"
-    //         });
-    //     }
-    // }
-
     async login(req: Request, res: Response): Promise<any> {
         try {
             const data = {
@@ -248,27 +220,12 @@ class UserController {
                 roleName = roleDoc.name;
             }
 
-            // const payload = {
-            //     name: userData.name,
-            //     userId: userData._id.toString(),
-            //     email: userData.email,
-            //     phone: userData.phone,
-            //     role: roleName,
-            // };
 
             // Generate tokens
             const accessToken = TokenService.generateAccessToken(userData, roleName);
             const refreshToken = TokenService.generateRefreshToken(userData, roleName);
 
             await userRepositories.updateRefreshToken(userData._id.toString(), refreshToken);
-
-            // Send welcome email
-            // try {
-            //     await emailService.sendWelcomeEmail(userData.email, userData.name);
-            //     console.log('✅ Welcome email sent successfully');
-            // } catch (emailError) {
-            //     console.log('⚠️ Login successful but welcome email failed:', emailError);
-            // }
 
             // Prepare user response without password
             const userResponse = {
@@ -282,6 +239,73 @@ class UserController {
                 createdAt: userData.createdAt,
                 updatedAt: userData.updatedAt
             };
+
+
+            const payload: userPayload = {
+                _id: userData._id.toString(),
+                name: userData.name,
+                email: userData.email,
+                role: roleName,
+            };
+
+            // const JWT_SECRET: Secret = process.env.JWT_SECRET as Secret;
+
+
+            // const token = jwt.sign(
+            //     payload,
+            //     JWT_SECRET,
+            //     {
+            //         expiresIn: '1 days'
+            //     })
+
+            // const cookieName = roleName === 'admin' ? 'adminToken' : 'userToken';
+
+            // // ✅ Cookie payload structure
+            // const cookiePayload = {
+            //     accessToken: accessToken,
+            //     refreshToken: refreshToken,
+            //     accessTokenExpires: process.env.JWT_ACCESS_EXPIRES_IN || '15m',
+            //     refreshTokenExpires: process.env.JWT_REFRESH_EXPIRES_IN || '1d'
+            // };
+
+            // res.cookie(cookieName, JSON.stringify(cookiePayload), {
+            //     httpOnly: true,
+            //     secure: false,
+            //     sameSite: "lax",
+            //     maxAge: 24 * 60 * 60 * 1000, // 1 day
+            // })
+
+            const isAdmin = roleName.toLowerCase() === 'admin';
+
+            const prefix = isAdmin ? 'admin' : 'user';
+
+            res.cookie(`${prefix}AccessToken`, accessToken, {
+                httpOnly: true,
+                secure: false,
+                sameSite: "lax",
+                maxAge: 15 * 60 * 1000
+            });
+
+            res.cookie(`${prefix}RefreshToken`, refreshToken, {
+                httpOnly: true,
+                secure: false,
+                sameSite: "lax",
+                maxAge: 24 * 60 * 60 * 1000
+            });
+
+            res.cookie(`${prefix}AccessTokenExpires`, process.env.JWT_ACCESS_EXPIRES_IN || '15m', {
+                httpOnly: true,
+                secure: false,
+                sameSite: "lax",
+                maxAge: 24 * 60 * 60 * 1000
+            });
+
+            res.cookie(`${prefix}RefreshTokenExpires`, process.env.JWT_REFRESH_EXPIRES_IN || '1d', {
+                httpOnly: true,
+                secure: false,
+                sameSite: "lax",
+                maxAge: 24 * 60 * 60 * 1000
+            });
 
             return res.status(200).json({
                 success: true,
@@ -304,10 +328,110 @@ class UserController {
         }
     }
 
+    //  async refreshToken(req: Request, res: Response): Promise<any> {
+    //     try {
+    //         const { refreshToken } = req.body;
+
+    //         if (!refreshToken) {
+    //             return res.status(400).json({
+    //                 success: false,
+    //                 message: "Refresh token is required"
+    //             });
+    //         }
+
+    //         // ✅ প্রথমে database থেকে user খুঁজে বের করুন
+    //         const user = await userRepositories.findByRefreshToken(refreshToken);
+    //         if (!user) {
+    //             return res.status(401).json({
+    //                 success: false,
+    //                 message: "Invalid refresh token"
+    //             });
+    //         }
+
+    //         let payload;
+    //         try {
+    //             // ✅ Token verify করুন
+    //             payload = TokenService.verifyRefreshToken(refreshToken);
+    //         } catch (error: any) {
+    //             // ✅ যদি token expire হয়
+    //             if (error.name === 'TokenExpiredError' || error.message.includes('expired')) {
+    //                 // Expired token decode করুন
+    //                 const decoded = jwt.decode(refreshToken) as TokenService.JwtPayload;
+
+    //                 if (decoded && decoded.userId && decoded.type === 'refresh') {
+    //                     payload = decoded;
+
+    //                     // ✅ Check if expired within acceptable grace period (24 hours)
+    //                     const currentTime = Math.floor(Date.now() / 1000);
+    //                     const gracePeriod = 24 * 60 * 60; // 24 hours grace period
+
+    //                     if (decoded.exp && decoded.exp + gracePeriod < currentTime) {
+    //                         // Database থেকে refreshToken remove করুন
+    //                         await userRepositories.updateRefreshToken(user._id.toString(), null);
+    //                         return res.status(401).json({
+    //                             success: false,
+    //                             message: "Refresh token expired. Please login again."
+    //                         });
+    //                     }
+    //                     // Grace period এর মধ্যে আছে, proceed করুন
+    //                 } else {
+    //                     await userRepositories.updateRefreshToken(user._id.toString(), null);
+    //                     return res.status(401).json({
+    //                         success: false,
+    //                         message: "Invalid refresh token"
+    //                     });
+    //                 }
+    //             } else {
+    //                 await userRepositories.updateRefreshToken(user._id.toString(), null);
+    //                 return res.status(401).json({
+    //                     success: false,
+    //                     message: "Invalid refresh token"
+    //                 });
+    //             }
+    //         }
+
+    //         // Check if token type is refresh
+    //         if (payload.type !== 'refresh') {
+    //             await userRepositories.updateRefreshToken(user._id.toString(), null);
+    //             return res.status(401).json({
+    //                 success: false,
+    //                 message: "Invalid token type"
+    //             });
+    //         }
+
+    //         const userRole = user.role?.toString() || 'user'; // ✅ Fixed: ObjectId → string
+
+    //         // ✅ Generate NEW tokens (both access and refresh)
+    //         const newAccessToken = TokenService.generateAccessToken(user, userRole);
+    //         const newRefreshToken = TokenService.generateRefreshToken(user, userRole);
+
+    //         // ✅ Database এ নতুন refreshToken update করুন
+    //         await userRepositories.updateRefreshToken(user._id.toString(), newRefreshToken);
+
+    //         return res.status(200).json({
+    //             success: true,
+    //             message: "Tokens refreshed successfully",
+    //             data: {
+    //                 accessToken: newAccessToken,
+    //                 refreshToken: newRefreshToken // ✅ নতুন refreshToken ও return করুন
+    //             }
+    //         });
+
+    //     } catch (error: any) {
+    //         console.log("Refresh token error:", error);
+    //         return res.status(401).json({
+    //             success: false,
+    //             message: error.message || "Token refresh failed"
+    //         });
+    //     }
+    // }
+
     // ... rest of your methods remain the same
+
     async refreshToken(req: Request, res: Response): Promise<any> {
         try {
-            const { refreshToken } = req.body;
+            // const { refreshToken } = req.body;
+            const refreshToken = req.cookies.refreshToken || req.body.refreshToken;;
 
             if (!refreshToken) {
                 return res.status(401).json({
@@ -315,6 +439,7 @@ class UserController {
                     message: "Refresh token is required"
                 });
             }
+            
 
             const user = await userRepositories.findByRefreshToken(refreshToken);
             if (!user) {
@@ -335,7 +460,8 @@ class UserController {
             }
 
             const newAccessToken = TokenService.generateAccessToken(user, roleName);
-            const newRefreshToken = TokenService.generateRefreshToken(user, roleName);
+            // const newRefreshToken = TokenService.generateRefreshToken(user, roleName);
+            const newRefreshToken = refreshToken
 
             await userRepositories.updateRefreshToken(user._id.toString(), newRefreshToken);
 

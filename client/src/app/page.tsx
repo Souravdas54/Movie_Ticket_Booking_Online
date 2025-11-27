@@ -1,7 +1,10 @@
-import React from "react";
+// "use client";
+
 import MoviesHome from "./movies/page";
 
+
 const Home: React.FC = () => {
+
 
     return (
 

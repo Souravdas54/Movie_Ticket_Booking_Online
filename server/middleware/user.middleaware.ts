@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-
+import { TokenService } from "../services/token.service";
+import { decode } from "punycode";
 
 interface JwtPayload {
     userId?: string;
@@ -30,7 +31,8 @@ export const protect = (req: Request, res: Response, next: NextFunction) => {
 
     const token = authHeader.split(" ")[1];
     try {
-        const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET as string) as JwtPayload;
+        const decoded = TokenService.verifyAccessToken(token);
+        // const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET as string) as JwtPayload;
 
         if (decoded.type !== 'access') {
             return res.status(401).json({
@@ -40,6 +42,7 @@ export const protect = (req: Request, res: Response, next: NextFunction) => {
         }
 
         const userId = decoded.userId;
+        // const userId = decode;
 
         if (!userId) {
             return res.status(401).json({

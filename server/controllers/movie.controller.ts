@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { movieRepositories } from "../repository/movie.repo";
+import { Types } from "mongoose";
 
 class AllMoviesControllers {
 
@@ -45,7 +46,7 @@ class AllMoviesControllers {
                 rating: Number(req.body.rating),
                 votes: Number(req.body.votes) || 0,
                 likes: Number(req.body.likes) || 0,
-                promoted: req.body.promoted === "true"
+                promoted: req.body.promoted === "true" ? true : false
             };
 
             const movie = await movieRepositories.create(movieData, userId, userRole);
@@ -111,6 +112,14 @@ class AllMoviesControllers {
                 });
             }
 
+            // ObjectId 
+            if (!Types.ObjectId.isValid(id)) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Invalid Movie ID format"
+                });
+            }
+
             const movie = await movieRepositories.findById(id);
 
             if (!movie) {
@@ -139,6 +148,192 @@ class AllMoviesControllers {
             });
         }
     }
+
+    async updateMovie(req: Request, res: Response) {
+        try {
+            const movieId = req.params.id;
+            const userId = req.user?.userId;
+            const userRole = req.user?.role;
+
+            if (!userId) {
+                return res.status(401).json({
+                    success: false,
+                    message: "Unauthorized: User ID missing"
+                });
+            }
+
+            if (!userRole) {
+                return res.status(401).json({
+                    success: false,
+                    message: "Unauthorized: Role missing"
+                });
+            }
+
+            const result = await movieRepositories.updateMovie(
+                movieId,
+                req.body,
+                userId,
+                userRole
+            );
+
+            res.status(200).json({
+                success: true,
+                message: "Movie updated successfully",
+                data: result
+            });
+
+        } catch (error: any) {
+            res.status(500).json({
+                success: false,
+                message: error.message
+            });
+        }
+    }
+
+
+    async deleteMovie(req: Request, res: Response) {
+        try {
+            const movieId = req.params.id;
+            const userId = req.user?.userId;
+            const userRole = req.user?.role;
+
+            if (!userId) {
+                return res.status(401).json({
+                    success: false,
+                    message: "Unauthorized: User ID missing"
+                });
+            }
+
+            if (!userRole) {
+                return res.status(401).json({
+                    success: false,
+                    message: "Unauthorized: Role missing"
+                });
+            }
+            
+            const result = await movieRepositories.deleteMovie(
+                movieId,
+                userId,
+                userRole
+            );
+
+            res.status(200).json({
+                success: true,
+                message: "Movie deleted successfully",
+                data: result
+            });
+
+        } catch (error: any) {
+            res.status(500).json({
+                success: false,
+                message: error.message
+            });
+        }
+    }
+
+    async promoteMovie(req: Request, res: Response) {
+        try {
+            const { id } = req.params;
+            const { promoted } = req.body; // true or false
+            const userRole = req.user?.role;
+
+            if (!id) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Movie ID is required"
+                });
+            }
+
+            if (!Types.ObjectId.isValid(id)) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Invalid Movie ID format"
+                });
+            }
+
+            if (!userRole) {
+                return res.status(401).json({
+                    success: false,
+                    message: "Unauthorized: Role missing"
+                });
+            }
+
+            if (typeof promoted !== "boolean") {
+                return res.status(400).json({
+                    success: false,
+                    message: "promoted must be true or false"
+                });
+            }
+
+            const updatedMovie = await movieRepositories.togglePromoteMovie(
+                id,
+                userRole,
+                promoted
+            );
+
+            return res.status(200).json({
+                success: true,
+                message: promoted ? "Movie Promoted successfully" : "Movie Unpromoted successfully",
+                data: updatedMovie
+            });
+
+        } catch (error: any) {
+            console.log("Controller Error - Promote Movie:", error);
+
+            return res.status(500).json({
+                success: false,
+                message: error.message || "Something went wrong"
+            });
+        }
+    }
+
+
+    async reactMovie(req: Request, res: Response) {
+        try {
+            const movieId = req.params.id;
+
+            const result = await movieRepositories.reactMovie(movieId, req.body);
+
+            res.status(200).json({
+                success: true,
+                message: "Reaction updated",
+                data: result
+            });
+        } catch (error: any) {
+            res.status(400).json({
+                success: false,
+                message: error.message
+            });
+        }
+    }
+
+    async simulateRating(req: Request, res: Response) {
+        try {
+            const { id } = req.params;
+            const { futureVotes, userRating } = req.body;
+
+            const result = await movieRepositories.simulateRating(
+                id,
+                futureVotes,
+                userRating
+            );
+
+            res.status(200).json({
+                success: true,
+                message: "Simulation success",
+                predictedRating: result
+            });
+
+        } catch (error: any) {
+            res.status(400).json({
+                success: false,
+                message: error.message
+            });
+        }
+    }
+
+
+
 }
 
 export const movieControllers = new AllMoviesControllers()

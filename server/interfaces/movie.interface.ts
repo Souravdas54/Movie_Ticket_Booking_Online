@@ -12,6 +12,7 @@ export interface MovieInterface {
     description: string;
     poster: string;
     rating: number;
+    ratingScale: 5 | 10; // ratingScale
     votes?: number;
     likes?: number;
     promoted?: boolean;

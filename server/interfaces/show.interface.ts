@@ -1,5 +1,11 @@
 import mongoose from "mongoose";
 
+export interface LockInterface {
+    seat: string;
+    sessionId: string;
+    expiresAt: Date;
+}
+
 export interface ShowInterface {
     movieId: mongoose.Types.ObjectId,
     theaterId: mongoose.Types.ObjectId,
@@ -13,6 +19,7 @@ export interface ShowInterface {
     date: Date,
     totalSeats: number,
     bookedSeats: string[],
+    locks: LockInterface[],
     price: number,
     createdBy: mongoose.Types.ObjectId, // ADMIN ID
     createdAt: Date,
@@ -35,4 +42,21 @@ export interface CreateMovieShow {
     price: number,
     createdAt: Date,
     updatedAt: Date
+}
+export interface ShowSummary {
+    _id: string;
+    theaterId: {
+        _id: string;
+        theatername: string;
+        district?: string;
+    };
+    room: {
+        name: string;
+        rows: number;
+        columns: number;
+    };
+    showTime: string[];
+    date: string;
+    price: number;
+    bookedSeats: string[];
 }

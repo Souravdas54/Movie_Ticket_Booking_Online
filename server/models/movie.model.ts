@@ -67,6 +67,11 @@ const MovieSchema: Schema = new Schema({
         type: Number,
         required: true
     },
+    ratingScale: {
+        type: Number,
+        enum: [5, 10],
+        default: 5,
+    },
 
     votes: {
         type: Number,

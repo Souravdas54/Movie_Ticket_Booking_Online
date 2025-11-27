@@ -66,7 +66,29 @@ export class TokenService {
             return jwt.verify(token, process.env.JWT_REFRESH_SECRET as string) as JwtPayload;
 
         } catch (error) {
-            throw new Error(`Access token verification failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+            throw new Error(`Refresh token verification failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }
     }
+
+    // NEW: Verify refresh token with expiration ignore
+    // static verifyRefreshTokenIgnoreExpiry(token: string): JwtPayload {
+    //     if (!process.env.JWT_REFRESH_SECRET) {
+    //         throw new Error('JWT_REFRESH_SECRET is not defined');
+    //     }
+    //     try {
+    //         const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET as string, {
+    //             ignoreExpiration: true // Expired token ও verify করতে দেবে
+    //         }) as JwtPayload;
+
+    //         // Manual expiration check
+    //         const currentTime = Math.floor(Date.now() / 1000);
+    //         if (decoded.exp && decoded.exp < currentTime) {
+    //             throw new Error('Refresh token expired');
+    //         }
+
+    //         return decoded;
+    //     } catch (error) {
+    //         throw new Error(`Refresh token verification failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    //     }
+    // }
 }

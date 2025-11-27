@@ -14,6 +14,7 @@ userRouter.post('/signup', upload.single('profilePicture'), userController.regis
 userRouter.post('/signin', userController.login)
 // userRouter.get('/verify-email/:token', userController.verifyEmail);
 userRouter.post('/refresh-token', refreshTokenProtect, userController.refreshToken);
+
 userRouter.post('/verify-otp',otpVerification.verify_Otp)
 userRouter.post('/resend-otp',otpVerification.resend_OTP)
 
@@ -24,6 +25,6 @@ userRouter.put('/profile/update/:id', protect, upload.single('profilePicture'), 
 userRouter.post('/logout', protect, authorizeRoles('user'), userController.logout);
 
 // Admin only routes
-userRouter.get('/admin/profile', protect, authorizeRoles('admin'), userController.getUserprofile);
+// userRouter.get('/admin/profile', protect, authorizeRoles('admin'), userController.getUserprofile);
 
 export { userRouter };
