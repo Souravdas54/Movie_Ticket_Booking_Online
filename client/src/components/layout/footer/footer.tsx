@@ -1,13 +1,6 @@
+"use client";
 
-'use client';
-import {
-  Box,
-  Container,
-  Typography,
-  Link as MuiLink,
-  Button,
-  Divider,
-} from '@mui/material';
+import { Box, Container, Typography, Link as MuiLink, Button, Divider, } from '@mui/material';
 import Link from 'next/link';
 
 export default function Footer() {
@@ -48,13 +41,13 @@ export default function Footer() {
           {/* Brand Section */}
           <Box sx={{ flex: { md: 2, lg: 3 } }}>
             <Typography variant="h6" fontWeight={700} gutterBottom>
-              CineBook Pro
+              BookMycinema
             </Typography>
-            <Typography 
-              variant="body2" 
-              color="grey.400" 
-              sx={{ 
-                lineHeight: 1.6, 
+            <Typography
+              variant="body2"
+              color="grey.400"
+              sx={{
+                lineHeight: 1.6,
                 maxWidth: 300,
                 mb: 2
               }}
@@ -77,8 +70,8 @@ export default function Footer() {
               <Typography variant="h6" fontWeight={600} gutterBottom>
                 Quick Links
               </Typography>
-              <Box 
-                component="nav" 
+              <Box
+                component="nav"
                 sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}
               >
                 {quickLinks.map((link) => (
@@ -104,8 +97,8 @@ export default function Footer() {
               <Typography variant="h6" fontWeight={600} gutterBottom>
                 Support
               </Typography>
-              <Box 
-                component="nav" 
+              <Box
+                component="nav"
                 sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}
               >
                 {supportLinks.map((link) => (
@@ -132,12 +125,12 @@ export default function Footer() {
             <Typography variant="h6" fontWeight={600} gutterBottom>
               Download App
             </Typography>
-            <Box 
-              sx={{ 
-                display: 'flex', 
-                flexDirection: 'column', 
-                gap: 2, 
-                maxWidth: 200 
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 2,
+                maxWidth: 200
               }}
             >
               <Button
@@ -173,7 +166,7 @@ export default function Footer() {
           color="grey.400"
           align="center"
         >
-          &copy; 2024 CineBook Pro. All rights reserved.
+          &copy; 2024 BookMycinema Pro. All rights reserved.
         </Typography>
       </Container>
     </Box>

@@ -6,7 +6,7 @@ export interface BookingInterfaace {
     movieId: Types.ObjectId;
     theaterId: Types.ObjectId;
     showId: Types.ObjectId;
-    seats: number[];
+    seats: string[];
     totalAmount: number;
     status: "Confirmed" | "Cancelled" | "Pending";
     paymentStatus: "Paid" | "Unpaid";
@@ -16,7 +16,7 @@ export interface BookingInterfaace {
 }
 
 export interface CreateBooking {
-    seats: number[];
+    seats: string[];
     totalAmount: number;
     status: "Confirmed" | "Cancelled" | "Pending";
     paymentStatus: "Paid" | "Unpaid";

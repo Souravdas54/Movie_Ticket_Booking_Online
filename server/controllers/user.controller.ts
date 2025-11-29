@@ -104,16 +104,6 @@ class UserController {
 
             console.log("User created successfully with ID:", newUser._id);
 
-            // Generate verification token
-            // const verificationToken = jwt.sign(
-            //     {
-            //         userId: newUser._id,
-            //         email: newUser.email
-            //     },
-            //     process.env.JWT_SECRET as string,
-            //     { expiresIn: '1d' }
-            // );
-
             // Send OTP email for verification
             try {
 
@@ -248,33 +238,6 @@ class UserController {
                 role: roleName,
             };
 
-            // const JWT_SECRET: Secret = process.env.JWT_SECRET as Secret;
-
-
-            // const token = jwt.sign(
-            //     payload,
-            //     JWT_SECRET,
-            //     {
-            //         expiresIn: '1 days'
-            //     })
-
-            // const cookieName = roleName === 'admin' ? 'adminToken' : 'userToken';
-
-            // // ✅ Cookie payload structure
-            // const cookiePayload = {
-            //     accessToken: accessToken,
-            //     refreshToken: refreshToken,
-            //     accessTokenExpires: process.env.JWT_ACCESS_EXPIRES_IN || '15m',
-            //     refreshTokenExpires: process.env.JWT_REFRESH_EXPIRES_IN || '1d'
-            // };
-
-            // res.cookie(cookieName, JSON.stringify(cookiePayload), {
-            //     httpOnly: true,
-            //     secure: false,
-            //     sameSite: "lax",
-            //     maxAge: 24 * 60 * 60 * 1000, // 1 day
-            // })
-
             const isAdmin = roleName.toLowerCase() === 'admin';
 
             const prefix = isAdmin ? 'admin' : 'user';
@@ -327,106 +290,6 @@ class UserController {
             });
         }
     }
-
-    //  async refreshToken(req: Request, res: Response): Promise<any> {
-    //     try {
-    //         const { refreshToken } = req.body;
-
-    //         if (!refreshToken) {
-    //             return res.status(400).json({
-    //                 success: false,
-    //                 message: "Refresh token is required"
-    //             });
-    //         }
-
-    //         // ✅ প্রথমে database থেকে user খুঁজে বের করুন
-    //         const user = await userRepositories.findByRefreshToken(refreshToken);
-    //         if (!user) {
-    //             return res.status(401).json({
-    //                 success: false,
-    //                 message: "Invalid refresh token"
-    //             });
-    //         }
-
-    //         let payload;
-    //         try {
-    //             // ✅ Token verify করুন
-    //             payload = TokenService.verifyRefreshToken(refreshToken);
-    //         } catch (error: any) {
-    //             // ✅ যদি token expire হয়
-    //             if (error.name === 'TokenExpiredError' || error.message.includes('expired')) {
-    //                 // Expired token decode করুন
-    //                 const decoded = jwt.decode(refreshToken) as TokenService.JwtPayload;
-
-    //                 if (decoded && decoded.userId && decoded.type === 'refresh') {
-    //                     payload = decoded;
-
-    //                     // ✅ Check if expired within acceptable grace period (24 hours)
-    //                     const currentTime = Math.floor(Date.now() / 1000);
-    //                     const gracePeriod = 24 * 60 * 60; // 24 hours grace period
-
-    //                     if (decoded.exp && decoded.exp + gracePeriod < currentTime) {
-    //                         // Database থেকে refreshToken remove করুন
-    //                         await userRepositories.updateRefreshToken(user._id.toString(), null);
-    //                         return res.status(401).json({
-    //                             success: false,
-    //                             message: "Refresh token expired. Please login again."
-    //                         });
-    //                     }
-    //                     // Grace period এর মধ্যে আছে, proceed করুন
-    //                 } else {
-    //                     await userRepositories.updateRefreshToken(user._id.toString(), null);
-    //                     return res.status(401).json({
-    //                         success: false,
-    //                         message: "Invalid refresh token"
-    //                     });
-    //                 }
-    //             } else {
-    //                 await userRepositories.updateRefreshToken(user._id.toString(), null);
-    //                 return res.status(401).json({
-    //                     success: false,
-    //                     message: "Invalid refresh token"
-    //                 });
-    //             }
-    //         }
-
-    //         // Check if token type is refresh
-    //         if (payload.type !== 'refresh') {
-    //             await userRepositories.updateRefreshToken(user._id.toString(), null);
-    //             return res.status(401).json({
-    //                 success: false,
-    //                 message: "Invalid token type"
-    //             });
-    //         }
-
-    //         const userRole = user.role?.toString() || 'user'; // ✅ Fixed: ObjectId → string
-
-    //         // ✅ Generate NEW tokens (both access and refresh)
-    //         const newAccessToken = TokenService.generateAccessToken(user, userRole);
-    //         const newRefreshToken = TokenService.generateRefreshToken(user, userRole);
-
-    //         // ✅ Database এ নতুন refreshToken update করুন
-    //         await userRepositories.updateRefreshToken(user._id.toString(), newRefreshToken);
-
-    //         return res.status(200).json({
-    //             success: true,
-    //             message: "Tokens refreshed successfully",
-    //             data: {
-    //                 accessToken: newAccessToken,
-    //                 refreshToken: newRefreshToken // ✅ নতুন refreshToken ও return করুন
-    //             }
-    //         });
-
-    //     } catch (error: any) {
-    //         console.log("Refresh token error:", error);
-    //         return res.status(401).json({
-    //             success: false,
-    //             message: error.message || "Token refresh failed"
-    //         });
-    //     }
-    // }
-
-    // ... rest of your methods remain the same
 
     async refreshToken(req: Request, res: Response): Promise<any> {
         try {

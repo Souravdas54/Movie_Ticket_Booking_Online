@@ -1,3 +1,4 @@
+import { Show } from "./booking";
 
 
 export interface Theater {
@@ -26,4 +27,8 @@ export interface TheatersByStateRequest {
 export interface TheatersByDistrictRequest {
   district: string;
   movieId?: string;
+}
+
+export interface TheaterWithShows extends Theater {
+  shows?: Show[];
 }

@@ -20,6 +20,7 @@ import { Theater } from "@/types/theater";
 import { fetchNearbyTheaters } from "@/app/api/location.endpoint";
 
 import './navbarstyle.css';
+import { useRouter } from "next/navigation";
 
 export default function Navbar() {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -53,6 +54,7 @@ export default function Navbar() {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
     const isSmallMobile = useMediaQuery(theme.breakpoints.down('sm'));
+    const router = useRouter();
 
     const districts = [
         "Kolkata",
@@ -146,35 +148,35 @@ export default function Navbar() {
         setDistrictAnchorEl(event.currentTarget);
     };
 
-    const handleLocationClick = async (event: React.MouseEvent<HTMLElement>) => {
-        setLocationAnchorEl(event.currentTarget);
-        setLoadingLocation(true);
+    // const handleLocationClick = async (event: React.MouseEvent<HTMLElement>) => {
+    //     setLocationAnchorEl(event.currentTarget);
+    //     setLoadingLocation(true);
 
-        if (!navigator.geolocation) {
-            alert("Geolocation not supported");
-            setLoadingLocation(false);
-            return;
-        }
+    //     if (!navigator.geolocation) {
+    //         alert("Geolocation not supported");
+    //         setLoadingLocation(false);
+    //         return;
+    //     }
 
-        navigator.geolocation.getCurrentPosition(async (pos) => {
-            const { latitude, longitude } = pos.coords;
-            try {
-                const res = await fetchNearbyTheaters(latitude, longitude);
-                setTheaters(res.data || []);
-            } catch (error: unknown) {
-                console.error("Location error:", error);
-                if (error instanceof Error) {
-                    alert(error.message);
-                }
-            } finally {
-                setLoadingLocation(false);
-            }
-        }, (error: GeolocationPositionError) => {
-            console.error("Geolocation error:", error);
-            setLoadingLocation(false);
-            alert("Failed to get location");
-        });
-    };
+    //     navigator.geolocation.getCurrentPosition(async (pos) => {
+    //         const { latitude, longitude } = pos.coords;
+    //         try {
+    //             const res = await fetchNearbyTheaters(latitude, longitude);
+    //             setTheaters(res.data || []);
+    //         } catch (error: unknown) {
+    //             console.error("Location error:", error);
+    //             if (error instanceof Error) {
+    //                 alert(error.message);
+    //             }
+    //         } finally {
+    //             setLoadingLocation(false);
+    //         }
+    //     }, (error: GeolocationPositionError) => {
+    //         console.error("Geolocation error:", error);
+    //         setLoadingLocation(false);
+    //         alert("Failed to get location");
+    //     });
+    // };
 
     const handleMenuClose = () => {
         setAnchorEl(null);
@@ -192,12 +194,6 @@ export default function Navbar() {
         handleLocationClose();
     };
 
-    const handleLogout = () => {
-        sessionStorage.clear();
-        setTimeout(() => {
-            window.location.reload();
-        }, 100);
-    };
 
     const handleSearchSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -205,6 +201,16 @@ export default function Navbar() {
         if (isMobile) {
             handleSearchClose();
         }
+    };
+
+    const handleLogout = () => {
+        sessionStorage.clear();
+        router.push('/movies')
+        window.location.reload();
+
+        // setTimeout(() => {
+        //     window.location.reload();
+        // }, 100);
     };
 
     const handleSearchClick = () => {

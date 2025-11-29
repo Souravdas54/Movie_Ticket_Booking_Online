@@ -17,6 +17,7 @@
     "@mui/styled-engine-sc": "^7.3.5",
     "@mui/x-date-pickers": "^8.19.0",
     "@reduxjs/toolkit": "^2.10.1",
+    "@stripe/stripe-js": "^8.5.3",
     "@types/uuid": "^10.0.0",
     "axios": "^1.13.2",
     "dayjs": "^1.11.19",
@@ -27,6 +28,7 @@
     "react-leaflet": "^5.0.0",
     "react-redux": "^9.2.0",
     "redux": "^5.0.1",
+    "stripe": "^20.0.0",
     "styled-components": "^6.1.19",
     "uuid": "^13.0.0"
   },
@@ -34,6 +36,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/stripe": "^8.0.416",
     "babel-plugin-react-compiler": "1.0.0",
     "eslint": "^9",
     "eslint-config-next": "16.0.1",

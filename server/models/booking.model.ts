@@ -23,7 +23,7 @@ const BookingSchema: Schema = new Schema({
       required: true
     },
     seats: {
-      type: [Number],
+      type: [String],
       required: true
     },
     totalAmount: {

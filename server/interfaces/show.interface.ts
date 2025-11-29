@@ -6,6 +6,16 @@ export interface LockInterface {
     expiresAt: Date;
 }
 
+export interface SeatPrice {
+    category: "Golden" | "Platinum" | "Diamond" | "Royal";
+    price: number;
+}
+
+export interface ShowTimeSlot {
+    time: string; // "12:00 PM"
+    availableCategories: SeatPrice[];
+}
+
 export interface ShowInterface {
     movieId: mongoose.Types.ObjectId,
     theaterId: mongoose.Types.ObjectId,
@@ -15,12 +25,12 @@ export interface ShowInterface {
         columns: number;   // e.g 10
     };
     screenNumber: string,
-    showTime: string[],
     date: Date,
+    timeSlots: ShowTimeSlot[];
     totalSeats: number,
     bookedSeats: string[],
     locks: LockInterface[],
-    price: number,
+
     createdBy: mongoose.Types.ObjectId, // ADMIN ID
     createdAt: Date,
     updatedAt: Date
@@ -35,11 +45,10 @@ export interface CreateMovieShow {
         columns: number;   // e.g 10
     };
     screenNumber: string,
-    showTime: string[],
     date: Date,
+    timeSlots: ShowTimeSlot[];
     totalSeats: number,
     bookedSeats: string[],
-    price: number,
     createdAt: Date,
     updatedAt: Date
 }
@@ -55,8 +64,6 @@ export interface ShowSummary {
         rows: number;
         columns: number;
     };
-    showTime: string[];
-    date: string;
-    price: number;
+    date: String;
     bookedSeats: string[];
 }

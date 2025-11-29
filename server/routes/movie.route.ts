@@ -12,7 +12,7 @@ movieRouter.post('/create', protect, authorizeRoles('admin'), upload.single('pos
 
 movieRouter.get('/get/all-movies', movieControllers.getAllovies)
 
-movieRouter.get('/movie-get/:id', protect, authorizeRoles('admin', 'user'), movieControllers.getMovieById)
+movieRouter.get('/:id', protect, authorizeRoles('admin', 'user'), movieControllers.getMovieById)
 
 movieRouter.patch('/movie/:id/promote', protect, authorizeRoles('admin','user'), movieControllers.promoteMovie)
 

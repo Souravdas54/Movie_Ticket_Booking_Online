@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { getAllMovies } from "../api/endpoint";
+import { getAllMovies } from "../api/movie.endpoint";
 import { useRouter } from "next/navigation";
 import { Alert, CircularProgress, Box, Typography, Card, CardMedia, CardContent, Chip, IconButton, useTheme, useMediaQuery, Button } from "@mui/material";
 import { ArrowBackIos as ArrowBackIcon, ArrowForwardIos as ArrowForwardIcon, Favorite, Star, PlayArrow, CalendarToday } from "@mui/icons-material";

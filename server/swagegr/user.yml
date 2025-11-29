@@ -1,0 +1,266 @@
+openapi: 3.0.0
+info:
+  title: Movie Booking API
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8500
+
+paths:
+  # USERS API --------------------------
+  # Sugnup #
+ /users/signup:
+  post:
+    tags: [Users]
+    summary: User Registration
+    description: Register a new user with profile picture upload.
+    requestBody:
+      required: true
+      content:
+        multipart/form-data:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+              email:
+                type: string
+              phone:
+                type: string
+              gender:
+                type: string
+              password:
+                type: string
+              role:
+                type: string
+                enum: [user, admin]
+              profilePicture:
+                type: string
+                format: binary
+    responses:
+      "201":
+        description: Registration successful
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserResponse'
+      "400":
+        description: Validation error or email exists
+      "500":
+        description: Internal Server Error
+# LOGIN #
+/users/signin:
+  post:
+    tags: [Users]
+    summary: User Login
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+              password:
+                type: string
+    responses:
+      "200":
+        description: Login successful
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginResponse'
+      "400":
+        description: Validation error
+      "404":
+        description: User not found
+      "401":
+        description: Invalid password
+
+# refresh-token
+/users/refresh-token:
+  post:
+    tags: [Users]
+    summary: Refresh Access Token
+    requestBody:
+      required: false
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              refreshToken:
+                type: string
+    responses:
+      "200":
+        description: Token refreshed
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshResponse'
+      "401":
+        description: Invalid refresh token
+
+# Get all users
+/users/profile:
+  get:
+    tags: [Users]
+    summary: Get all user profiles
+    security:
+      - bearerAuth: []
+    responses:
+      "200":
+        description: Users fetched
+      "404":
+        description: No users found
+
+# Get user by ID
+        /users/profile/user/{id}:
+  get:
+    tags: [Users]
+    summary: Get user by ID
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      "200":
+        description: User fetched
+      "404":
+        description: User not found
+
+        # Update profile
+
+/users/profile/update/{id}:
+  put:
+    tags: [Users]
+    summary: Update user profile
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    requestBody:
+      required: false
+      content:
+        multipart/form-data:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+              phone:
+                type: string
+              profilePicture:
+                type: string
+                format: binary
+    responses:
+      "200":
+        description: Profile updated
+      "404":
+        description: User not found
+      "500":
+        description: Internal Error
+
+# logout
+/users/logout:
+  post:
+    tags: [Users]
+    summary: User Logout
+    security:
+      - bearerAuth: []
+    responses:
+      "200":
+        description: Logged out successfully
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+
+    UserResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        data:
+          type: object
+          properties:
+            _id: { type: string }
+            name: { type: string }
+            email: { type: string }
+            phone: { type: string }
+            gender: { type: string }
+            profilePicture: { type: string }
+            isVerified: { type: boolean }
+            role: { type: string }
+            createdAt: { type: string }
+            updatedAt: { type: string }
+
+    LoginResponse:
+      type: object
+      properties:
+        success: { type: boolean }
+        message: { type: string }
+        data:
+          type: object
+          properties:
+            _id: { type: string }
+            name: { type: string }
+            email: { type: string }
+            phone: { type: string }
+            profilePicture: { type: string }
+            isVerified: { type: boolean }
+            role: { type: string }
+
+        tokens:
+          type: object
+          properties:
+            accessToken: { type: string }
+            refreshToken: { type: string }
+            accessTokenExpires: { type: string }
+            refreshTokenExpires: { type: string }
+
+    RefreshResponse:
+      type: object
+      properties:
+        success: { type: boolean }
+        message: { type: string }
+        data:
+          type: object
+          properties:
+            accessToken: { type: string }
+            refreshToken: { type: string }
+            accessTokenExpires: { type: string }
+            refreshTokenExpires: { type: string }
+
+
+  # MOVIES API --------------------------
+  /api/movies/create:
+    post:
+      tags: [Movies]
+      summary: Create a new movie
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/Movie"
+      responses:
+        "201":
+          description: Movie created
+

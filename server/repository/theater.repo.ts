@@ -20,15 +20,13 @@ class TheaterRepositories {
 
             const theatersToCreate = {
                 userId: userId,
-                // movieId: movieId,
                 theatername: theatersData.theatername,
-                // location: theatersData.location,
                 screens: theatersData.screens,
                 contact: theatersData.contact,
                 assignedMovies: theatersData.assignedMovies,
                 district: theatersData.district,
                 state: theatersData.state,
-                showTimes: theatersData.showTimes
+
             }
 
             const newTheaters = await theaterModel.create(theatersToCreate)
@@ -57,7 +55,6 @@ class TheaterRepositories {
                         state: 1,
                         screens: 1,
                         contact: 1,
-                        showTimes: 1,
                         assignedMovies: 1
                     }
                 }

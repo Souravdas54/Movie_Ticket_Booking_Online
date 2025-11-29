@@ -24,27 +24,15 @@ class AllTheaterController {
                 });
             }
 
-            // if (!movieId) {
-            //     return res.status(400).json({
-            //         success: false,
-            //         message: "Movie ID is required"
-            //     });
-            // }
             const theatherData: CreateTheatersInterface = {
                 theatername: req.body.theatername,
-                // location: {
-                //     type: "Point",
-                //     coordinates: [
-                //         Number(req.body.longitude),
-                //         Number(req.body.latitude)
-                //     ]
-                // },
+   
                 screens: req.body.screens,
                 contact: req.body.contact,
                 assignedMovies: req.body.assignedMovies,
                 district: req.body.district,
                 state: req.body.state || "West Bengal",
-                showTimes: req.body.showTimes || ["10:00 AM", "1:30 PM", "4:45 PM", "8:00 PM", "11:15 PM"]
+                
             }
 
             const theather = await theaterRepositories.create(theatherData, userId, userRole)

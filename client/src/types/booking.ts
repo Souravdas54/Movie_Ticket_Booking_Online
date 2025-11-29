@@ -1,3 +1,13 @@
+export interface SeatPrice {
+  category: "Golden" | "Platinum" | "Diamond" | "Royal";
+  price: number;
+}
+
+export interface ShowTimeSlot {
+  time: string;
+  availableCategories: SeatPrice[];
+}
+
 export interface Show {
   _id: string;
   movieId: string;
@@ -14,6 +24,7 @@ export interface Show {
   screenNumber: string;
   showTime: string[];
   date: string;
+   timeSlots: ShowTimeSlot[];
   totalSeats: number;
   bookedSeats: string[];
   locks: Lock[];
@@ -48,6 +59,10 @@ export interface ApiResponse<T> {
   success: boolean;
   message?: string;
   data: T;
+  // date: string;
+  movieId?: string;
+  date?: string;
+  availableTimes?: string[];
 }
 
 export interface LockSeatRequest {
@@ -59,6 +74,7 @@ export interface LockSeatRequest {
 
 export interface ConfirmBookingRequest {
   showId: string;
+  userId: string;
   seats: string[];
   totalAmount: number;
   sessionId: string;
@@ -83,3 +99,4 @@ export interface SeatLockResponse {
     lockedSeats: string[];
   };
 }
+

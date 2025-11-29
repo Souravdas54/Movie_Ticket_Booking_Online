@@ -11,7 +11,7 @@ import {
     Alert
 } from "@mui/material";
 import { AccessTime, CalendarToday, Language, Star } from "@mui/icons-material";
-import { getMovieById } from "@/app/api/endpoint";
+import { getMovieById } from "@/app/api/movie.endpoint";
 // import ShowTimeSelector from "@/components/ShowTimeSelector";
 
 interface Movie {

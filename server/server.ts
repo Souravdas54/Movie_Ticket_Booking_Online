@@ -10,11 +10,13 @@ import cookieParser from "cookie-parser";
 import cors from 'cors'
 import { connectDatabase } from './config/dbConnection';
 import { createDefaultRoles } from './middleware/role.middleware';
+import { swaggerSetup } from "./swagger";
 
 connectDatabase()
 
 const app = express();
 
+// swaggerSetup(app);
 
 // Routers
 import { adminRouter } from './routes/ejs router/admin.route';
@@ -23,6 +25,12 @@ import { movieRouter } from './routes/movie.route';
 import { theaterRouter } from './routes/theater.route';
 import { showRouter } from './routes/show.route';
 import { bookingRouter } from './routes/booking.route';
+
+// import { showRepository } from "./repository/show.repo";
+
+// setInterval(() => {
+//     showRepository.releaseExpiredLocks().catch(console.error);
+// }, 60 * 1000);
 
 app.use(cookieParser());
 
@@ -79,7 +87,7 @@ app.use('/movies', movieRouter)
 // Theater
 app.use('/theaters', theaterRouter)
 // Show
-app.use('/seat', showRouter)
+app.use('/shows', showRouter)
 // Booking
 app.use('/booking', bookingRouter)
 

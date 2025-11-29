@@ -2,20 +2,13 @@
 "use client";
 
 import React, { useState } from "react";
-import {
-    Box,
-    Typography,
-    CircularProgress,
-    Snackbar,
-    Alert,
-    Dialog,
-    DialogContent,
-    IconButton
-} from "@mui/material";
+import {Box,Typography,CircularProgress,Snackbar,Alert,Dialog,DialogContent,IconButton} from "@mui/material";
 import { LocalMovies, Google, Close } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
 import { signin } from "@/app/api/endpoint";
+
 import "./signinstyle.css";
+
 import { UserType } from "@/types/usertype";
 import Image from "next/image";
 
@@ -123,44 +116,44 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, onClose, onSwitchToSignup
                 const accessToken = res.tokens?.accessToken;
                 const refreshToken = res.tokens?.refreshToken;
 
-                console.log('Extracted values:');
-                console.log('- userData:', userData);
-                console.log('- role:', role);
-                console.log('- accessToken:', accessToken);
-                console.log('- refreshToken:', refreshToken);
+                // console.log('Extracted values:');
+                // console.log('- userData:', userData);
+                // console.log('- role:', role);
+                // console.log('- accessToken:', accessToken);
+                // console.log('- refreshToken:', refreshToken);
 
 
                 // Store authentication data
                 if (accessToken) {
                     sessionStorage.setItem("accessToken", accessToken);
-                    console.log('Access token stored in sessionStorage');
+                    // console.log('Access token stored in sessionStorage');
                 } else {
                     console.log('No access token found in response');
                 }
 
                 if (refreshToken) {
                     sessionStorage.setItem("refreshToken", refreshToken);
-                    console.log('Refresh token stored in sessionStorage');
+                    // console.log('Refresh token stored in sessionStorage');
                 } else {
                     console.log('No refresh token found in response');
                 }
 
                 if (role) {
                     sessionStorage.setItem('userRole', role);
-                    console.log('Role stored in sessionStorage');
+                    // console.log('Role stored in sessionStorage');
                 }
 
                 if (userData) {
                     sessionStorage.setItem('userData', JSON.stringify(userData));
-                    console.log('User data stored in sessionStorage');
+                    // console.log('User data stored in sessionStorage');
                 }
 
 
 
                 // Log SessionStorage to verify
                 console.log('sessionStorage after login:');
-                console.log('- userRole:', sessionStorage.getItem('userRole'));
-                console.log('- userData:', sessionStorage.getItem('userData'));
+                // console.log('- userRole:', sessionStorage.getItem('userRole'));
+                // console.log('- userData:', sessionStorage.getItem('userData'));
 
                 // If using remember me, store in more persistent storage
                 if (rememberMe) {
@@ -175,6 +168,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, onClose, onSwitchToSignup
                         router.push('/');
                     }
                 }, 1500);
+                window.location.reload();
 
             } else {
                 const errorMessage = res?.message || 'Login failed. Please check your credentials.';
